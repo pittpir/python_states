@@ -1,6 +1,9 @@
 import random
 import re
 from threading import Timer
+import signal
+
+signal.signal(signal.SIGINT, keyboardInterruptHandler)
 
 states = [
 {
@@ -166,6 +169,10 @@ for item in states:
 	item['incorrect'] = 0
 	item['correct'] = 0
 
+def keyboardInterruptHandler(signal, frame):
+    print("KeyboardInterrupt (ID: {}) has been caught. Cleaning up and stopping timer...".format(signal))
+    t.cancel()
+    exit(0)
 
 def clear_user(arr):
 		arr['count'] = 0
@@ -197,6 +204,7 @@ def cow():
 		random_array = random.sample(list(range(len(states))), 1)[0]
 		user_array['count'] += 1
 		print(f"What is the capital of {states[random_array]['name']}?")
+		global t 
 		t = Timer(5.0, guess, args=[ f"{states[random_array]['capital']}"] )
 		t.start()
 		x = input()
